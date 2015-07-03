@@ -3,15 +3,14 @@
 #include <unistd.h>
 #include <string.h>
 #include <math.h>
-int c, n = 0, d = 0, i, l, t = 0, j = 0, k = 1;
+int c, n = 0, d = 0, i, l, t = 0, j = 0, k = 0;
 char *g = 0;
 int **a;
-//int* binary(int t) {
-    
 void creatematrix() {
     int arrsize = sizeof(int) * n;
-    a = malloc(arrsize);
+    a = malloc(sizeof(int *));
     int ii = 0;
+    int m,mm;
     for (i = strlen(g) - 1; i >= -1; i--) {
         if (i == -1 || g[i] == ',') {
             k++;
@@ -20,45 +19,52 @@ void creatematrix() {
                 free(a);
                 exit(0);
             }
-            int b[n];
+            a = realloc(a, (ii + 1) * sizeof(int *));
+            a[ii] = malloc(n * sizeof(int));
             for (l = 0; l < n; l++) {
                 if (t >= (1 << (n - l - 1))) {
-                    b[l] = 1;
+                    a[ii][l] = 1;
                     t -= (1 << (n - l - 1));
-                } else b[l] = 0;
+                } else a[ii][l] = 0;
             }
-            /*int mmm;
-            for (mmm = 0; mmm < sizeof(n); mmm++) printf("b%d: %d", ii, b[mmm]);
-            printf("\n");*/
-            a = realloc(a, arrsize * (ii + 1));
-            a[ii] = b;
             ii++;
-            //printf("%d\n", t);
             t = j = 0;
         } else {
             t += (g[i] - '0') * pow(10,j);
             j++;
         }
     }
-    int m,mm;
-    for (m = 0; m < sizeof(a) / sizeof(a[0]); m++) {
-        for (mm = 0; mm < sizeof(a[m]); mm++) printf("%d ", a[m][mm]);
+    /*for (m = 0; m < k; m++) {
+        for (mm = 0; mm < n; mm++) printf("%d ", a[m][mm]);
         printf("\n");
-    }
+    }*/
 }
 void decode() {
+    
+}
+void normalform() {
+    int nn = n;
+    int kk = k;
+    int nfi;
+    for (nfi = 0; nfi < k; nfi++) {
+        
 }
 void encode() {
-    int iii = 0, tt, jjj;
+    normalform();
+    int iii = 0, jjj;
+    int col[n];
+    int ci;
+    for (ci = 0; ci < n; ci++) col[ci] = 0;
     while ((c = getc(stdin)) != EOF) {
         if (iii % k == 0) {
-            tt = 0;
-            if (iii != 0) printf("%d", (tt & 1));
+            for (ci = 0; ci < n; ci++) {
+                if (iii != 0) printf("%d", (col[ci] & 1));
+                col[ci] = 0;
+            }
         }
-        //for (jjj = 0; jjj < n; jjj++) tt += a[iii % k][jjj];
+        for (ci = 0; ci < n; ci++) col[ci] += c * a[iii % k][ci];
         iii++;
     }
-    printf("%d", (tt & 1));
 }
 void main(int argc, char **argv) {
     while ((c = getopt(argc, argv, "n:g:d")) != -1) {
